@@ -7,40 +7,39 @@ const MIN_LENGTH_INITIAL = 10
  * 空きマスリスト
  * 双方向連結リストによる実装
  */
-class EmptyList {
+class EmptyList extends Cell {
   length = 0
-  private head: Cell
 
   constructor() {
-    this.head = new Cell(0, 0)
+    super(-1, 1)
   }
 
   /**
    * 要素を最後尾に追加
    */
   push(cell: Cell): void {
-    cell.prev = this.head.prev
-    cell.next = this.head
+    cell.prev = this.prev
+    cell.next = this
     cell.prev.next = cell
-    this.head.prev = cell
+    this.prev = cell
     this.length++
   }
 
   /**
-   * リストの中の最小の要素を取り出す
+   * リストの中から要素を1つ取り出す
    */
-  popMin(): Cell {
-    let cell = this.head
-    let selectedCell = this.head
+  pop(): Cell {
+    let cell: Cell = this
+    let selectedCell: Cell = this
     let minLength = MIN_LENGTH_INITIAL
 
-    while ((cell = cell.next) !== this.head) {
-      if (cell.length === 1) {
+    while ((cell = cell.next) !== this) {
+      if (cell.candidatesCount === 1) {
         selectedCell = cell
         break
       }
-      if (cell.length < minLength) {
-        minLength = cell.length
+      if (cell.candidatesCount < minLength) {
+        minLength = cell.candidatesCount
         selectedCell = cell
       }
     }

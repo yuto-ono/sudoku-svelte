@@ -39,17 +39,13 @@ class Solver {
    * 改良バックトラック
    */
   solve(): boolean {
-    if (this.emptyList.length === 0) {
-      return true // 解けた！
-    }
-
     // 空きマスのうち、最も候補が少ないものを選ぶ
-    const cell = this.emptyList.popMin()
+    const cell = this.emptyList.pop()
 
     // 候補に上がっている数字を入れてみる
     for (let i = 1; i <= 9; i++) {
       if (cell.setValue(i)) {
-        if (this.solve()) {
+        if (this.emptyList.length === 0 || this.solve()) {
           return true
         }
         cell.resetValue()

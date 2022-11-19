@@ -9,7 +9,7 @@ const DEFAULT_CANDIDATES = 0x3fe
  */
 class Cell {
   value: number
-  length = 0
+  candidatesCount = 0
   prev: Cell
   next: Cell
   private pos: number
@@ -24,7 +24,7 @@ class Cell {
     this.next = this
 
     if (value === 0) {
-      this.length = 9
+      this.candidatesCount = 9
       this.candidates = DEFAULT_CANDIDATES
     }
   }
@@ -61,7 +61,7 @@ class Cell {
           const mask = 1 << cell.value
           if (this.candidates & mask) {
             this.candidates ^= mask
-            this.length--
+            this.candidatesCount--
           }
         }
       })
@@ -82,12 +82,12 @@ class Cell {
     this.value = value
     for (const cell of this.relatedCells) {
       if (cell.value === 0 && cell.candidates & mask) {
-        if (cell.length === 1) {
+        if (cell.candidatesCount === 1) {
           this.resetValue()
           return false
         }
         cell.candidates ^= mask
-        cell.length--
+        cell.candidatesCount--
         this.changedCells.push(cell)
       }
     }
@@ -102,7 +102,7 @@ class Cell {
     const mask = 1 << this.value
     this.changedCells.forEach((cell) => {
       cell.candidates ^= mask
-      cell.length++
+      cell.candidatesCount++
     })
     this.changedCells.splice(0)
     this.value = 0
