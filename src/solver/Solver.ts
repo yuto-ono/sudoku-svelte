@@ -39,7 +39,7 @@ class Solver {
    * 改良バックトラック
    */
   solve(): boolean {
-    // 空きマスのうち、最も候補が少ないものを選ぶ
+    // 空きマスを1つ選ぶ
     const cell = this.emptyList.pop()
 
     // 候補に上がっている数字を入れてみる
