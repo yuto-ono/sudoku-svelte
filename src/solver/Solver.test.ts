@@ -1,15 +1,15 @@
 import { describe, expect, it } from "@jest/globals"
-import { Solver } from "./Solver"
+import { Solver, SolveStatus } from "./Solver"
 
 describe("Solver", () => {
   it("sample 1", () => {
     const solver = new Solver(sample1)
-    expect(solver.solve()).toBe(true)
+    expect(solver.solve()).toBe(SolveStatus.success)
     expect(solver.getNumberArray()).toStrictEqual(answer1)
   })
   it("sample 2", () => {
     const solver = new Solver(sample2)
-    expect(solver.solve()).toBe(true)
+    expect(solver.solve()).toBe(SolveStatus.success)
     expect(solver.getNumberArray()).toStrictEqual(answer2)
   })
 })

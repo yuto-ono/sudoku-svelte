@@ -1,22 +1,30 @@
 <script lang="ts">
   import Button from "./Button.svelte"
   import { cells, cellsIsEmpty, solved, time } from "./stores"
-  import { Solver } from "./solver"
+  import { Solver, SolveStatus } from "./solver"
 
   const solve = () => {
     const startTime = performance.now()
     const solver = new Solver($cells.map((cell) => cell.num))
-    if (!solver.isValid) {
-      alert("重複があります。")
-      return
-    }
-    const _solved = solver.solve()
+    const result = solver.solve()
     $time = performance.now() - startTime
-    if (_solved) {
-      cells.setSolvedArray(solver.getNumberArray())
-      $solved = true
-    } else {
-      alert("解けませんでした。")
+    switch (result) {
+      case SolveStatus.success:
+        cells.setSolvedArray(solver.getNumberArray())
+        $solved = true
+        break
+      case SolveStatus.duplicated:
+        alert("重複があります。")
+        break
+      case SolveStatus.noEmpty:
+        alert("空白のマスがありません。")
+        break
+      case SolveStatus.unsolvable:
+        alert("解けませんでした。")
+        break
+      default:
+        alert("不正な入力です。")
+        break
     }
   }
 

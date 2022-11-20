@@ -1,1 +1,1 @@
-export { Solver } from "./Solver"
+export { Solver, SolveStatus } from "./Solver"
