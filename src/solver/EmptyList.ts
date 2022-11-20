@@ -1,4 +1,4 @@
-import Cell from "./Cell"
+import { Cell } from "./Cell"
 
 // 最小の要素を探すための初期値
 const MIN_LENGTH_INITIAL = 10
@@ -7,7 +7,7 @@ const MIN_LENGTH_INITIAL = 10
  * 空きマスリスト
  * 双方向連結リストによる実装
  */
-class EmptyList extends Cell {
+export class EmptyList extends Cell {
   length = 0
 
   constructor() {
@@ -59,5 +59,3 @@ class EmptyList extends Cell {
     this.length++
   }
 }
-
-export default EmptyList

@@ -7,7 +7,7 @@ const DEFAULT_CANDIDATES = 0x3fe
  * そのマスの候補のリストとしても機能する
  * 連結リストのアイテムとしても機能する
  */
-class Cell {
+export class Cell {
   value: number
   candidatesCount = 0
   prev: Cell
@@ -121,5 +121,3 @@ class Cell {
     }
   }
 }
-
-export default Cell

@@ -1,3 +1,1 @@
-import Solver from "./Solver"
-
-export { Solver }
+export { Solver } from "./Solver"

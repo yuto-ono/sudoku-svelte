@@ -1,12 +1,12 @@
-import Cell from "./Cell"
-import EmptyList from "./EmptyList"
+import { Cell } from "./Cell"
+import { EmptyList } from "./EmptyList"
 
 const CELL_NUMBER = 81
 
 /**
  * 数独の盤面を管理し、解くクラス
  */
-class Solver {
+export class Solver {
   isValid = true
   private cells: Cell[] = []
   private emptyList: EmptyList
@@ -64,5 +64,3 @@ class Solver {
     return this.cells.map((cell) => cell.value)
   }
 }
-
-export default Solver

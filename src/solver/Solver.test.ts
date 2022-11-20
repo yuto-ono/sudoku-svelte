@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import Solver from "./Solver"
+import { Solver } from "./Solver"
 
 describe("Solver", () => {
   it("sample 1", () => {
