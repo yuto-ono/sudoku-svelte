@@ -8,7 +8,7 @@ const DEFAULT_CANDIDATES = 0x3fe
  * 連結リストのアイテムとしても機能する
  */
 export class Cell {
-  value: number
+  num: number
   candidatesCount = 0
   prev: Cell
   next: Cell
@@ -19,7 +19,7 @@ export class Cell {
 
   constructor(pos: number, value: number) {
     this.pos = pos
-    this.value = value
+    this.num = value
     this.prev = this
     this.next = this
 
@@ -49,16 +49,16 @@ export class Cell {
       this.addRelatedCell(cells, row33, col33)
     }
 
-    if (this.value !== 0) {
+    if (this.num !== 0) {
       // 重複チェック
-      if (this.relatedCells.some((cell) => cell.value === this.value)) {
+      if (this.relatedCells.some((cell) => cell.num === this.num)) {
         return false
       }
     } else {
       // 候補リストの作成
       this.relatedCells.forEach((cell) => {
-        if (cell.value !== 0) {
-          const mask = 1 << cell.value
+        if (cell.num !== 0) {
+          const mask = 1 << cell.num
           if (this.candidates & mask) {
             this.candidates ^= mask
             this.candidatesCount--
@@ -79,9 +79,9 @@ export class Cell {
     if ((this.candidates & mask) === 0) {
       return false
     }
-    this.value = value
+    this.num = value
     for (const cell of this.relatedCells) {
-      if (cell.value === 0 && cell.candidates & mask) {
+      if (cell.num === 0 && cell.candidates & mask) {
         if (cell.candidatesCount === 1) {
           this.resetValue()
           return false
@@ -99,13 +99,13 @@ export class Cell {
    * changedCells をもとに、関連セルの候補も元に戻す
    */
   resetValue(): void {
-    const mask = 1 << this.value
+    const mask = 1 << this.num
     this.changedCells.forEach((cell) => {
       cell.candidates ^= mask
       cell.candidatesCount++
     })
     this.changedCells.splice(0)
-    this.value = 0
+    this.num = 0
   }
 
   /**

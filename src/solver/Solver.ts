@@ -41,7 +41,7 @@ export class Solver {
       if (!cell.init(this.cells)) {
         return SolveStatus.duplicated // 重複を発見
       }
-      if (cell.value === 0) {
+      if (cell.num === 0) {
         this.emptyList.push(cell)
       }
     }
@@ -56,7 +56,7 @@ export class Solver {
    * 現在の盤面のデータを取得
    */
   getNumberArray(): number[] {
-    return this.cells.map((cell) => cell.value)
+    return this.cells.map((cell) => cell.num)
   }
 
   /**
