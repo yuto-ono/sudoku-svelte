@@ -8,39 +8,29 @@ const DEFAULT_CANDIDATES = 0x3fe
  * 連結リストのアイテムとしても機能する
  */
 export class Cell {
-  num: number
-  candidatesCount = 0
+  num: number = 0
+  candidatesCount = 9
   prev: Cell
   next: Cell
-  private pos: number
-  private candidates = 0
+  pos: number
+  private candidates = DEFAULT_CANDIDATES
   private relatedCells: Cell[] = []
   private changedCells: Cell[] = []
 
-  constructor(pos: number, value: number) {
+  constructor(pos: number) {
     this.pos = pos
-    this.num = value
     this.prev = this
     this.next = this
-
-    if (value === 0) {
-      this.candidatesCount = 9
-      this.candidates = DEFAULT_CANDIDATES
-    }
   }
 
   /**
-   * 初期化
-   * セルのリストが完成したあとに呼ぶ想定
-   * 矛盾を発見したら false を返す
+   * 関連セルリストの作成
    */
-  init(cells: Cell[]): boolean {
+  setRelatedCells(cells: Cell[]): void {
     const row = Math.floor(this.pos / 9)
     const col = this.pos % 9
     const area33top = Math.floor(row / 3) * 3
     const area33left = Math.floor(col / 3) * 3
-
-    // 関連セルの追加
     for (let i = 0; i < 9; i++) {
       const row33 = area33top + Math.floor(i / 3)
       const col33 = area33left + (i % 3)
@@ -48,42 +38,32 @@ export class Cell {
       this.addRelatedCell(cells, i, col)
       this.addRelatedCell(cells, row33, col33)
     }
+  }
 
-    if (this.num !== 0) {
-      // 重複チェック
-      if (this.relatedCells.some((cell) => cell.num === this.num)) {
-        return false
-      }
-    } else {
-      // 候補リストの作成
-      this.relatedCells.forEach((cell) => {
-        if (cell.num !== 0) {
-          const mask = 1 << cell.num
-          if (this.candidates & mask) {
-            this.candidates ^= mask
-            this.candidatesCount--
-          }
-        }
-      })
-    }
-
-    return true
+  /**
+   * 初期化
+   */
+  init(): void {
+    this.num = 0
+    this.candidates = DEFAULT_CANDIDATES
+    this.candidatesCount = 9
+    this.changedCells.splice(0)
   }
 
   /**
    * 数字をセット 関連セルの候補も更新
    * 矛盾が生じたら false を返す
    */
-  setValue(value: number): boolean {
-    const mask = 1 << value
+  setNum(num: number): boolean {
+    const mask = 1 << num
     if ((this.candidates & mask) === 0) {
       return false
     }
-    this.num = value
+    this.num = num
     for (const cell of this.relatedCells) {
       if (cell.num === 0 && cell.candidates & mask) {
         if (cell.candidatesCount === 1) {
-          this.resetValue()
+          this.resetNum()
           return false
         }
         cell.candidates ^= mask
@@ -98,7 +78,7 @@ export class Cell {
    * リセット（空きマスに戻す）
    * changedCells をもとに、関連セルの候補も元に戻す
    */
-  resetValue(): void {
+  resetNum(): void {
     const mask = 1 << this.num
     this.changedCells.forEach((cell) => {
       cell.candidates ^= mask

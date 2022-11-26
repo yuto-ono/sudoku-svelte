@@ -22,6 +22,8 @@ export class Solver {
 
   constructor() {
     this.emptyList = new EmptyList()
+    this.cells = [...Array(CELL_NUMBER)].map((_, i) => new Cell(i))
+    this.cells.forEach((cell) => cell.setRelatedCells(this.cells))
   }
 
   /**
@@ -32,17 +34,14 @@ export class Solver {
       return SolveStatus.invalidLength // 配列の長さが違う
     }
 
-    this.cells = data.map((num, i) => new Cell(i, num))
-
+    this.cells.forEach((cell) => cell.init())
     this.emptyList.clear()
-
-    // セルの初期化と空きマスリストの作成
     for (const cell of this.cells) {
-      if (!cell.init(this.cells)) {
-        return SolveStatus.duplicated // 重複を発見
-      }
-      if (cell.num === 0) {
+      const num = data[cell.pos]
+      if (num === 0) {
         this.emptyList.push(cell)
+      } else if (!cell.setNum(num)) {
+        return SolveStatus.duplicated // 重複を発見
       }
     }
 
@@ -70,11 +69,11 @@ export class Solver {
 
     // 候補に上がっている数字を入れてみる
     for (let i = 1; i <= 9; i++) {
-      if (cell.setValue(i)) {
+      if (cell.setNum(i)) {
         if (this.emptyList.length === 0 || this.solveRecursive()) {
           return true
         }
-        cell.resetValue()
+        cell.resetNum()
       }
     }
 

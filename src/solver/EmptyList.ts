@@ -11,7 +11,7 @@ export class EmptyList extends Cell {
   length = 0
 
   constructor() {
-    super(-1, 1)
+    super(-1)
   }
 
   /**
