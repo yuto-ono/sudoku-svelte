@@ -34,6 +34,8 @@ export class Solver {
 
     this.cells = data.map((num, i) => new Cell(i, num))
 
+    this.emptyList.clear()
+
     // セルの初期化と空きマスリストの作成
     for (const cell of this.cells) {
       if (!cell.init(this.cells)) {

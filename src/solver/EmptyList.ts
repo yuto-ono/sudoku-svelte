@@ -58,4 +58,13 @@ export class EmptyList extends Cell {
     cell.next.prev = cell
     this.length++
   }
+
+  /**
+   * 空にする
+   */
+  clear(): void {
+    this.next = this
+    this.prev = this
+    this.length = 0
+  }
 }
