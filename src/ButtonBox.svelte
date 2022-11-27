@@ -3,10 +3,11 @@
   import { cells, cellsIsEmpty, solved, time } from "./stores"
   import { Solver, SolveStatus } from "./solver"
 
+  const solver = new Solver()
+
   const solve = () => {
     const startTime = performance.now()
-    const solver = new Solver($cells.map((cell) => cell.num))
-    const result = solver.solve()
+    const result = solver.solve($cells.map((cell) => cell.num))
     $time = performance.now() - startTime
     switch (result) {
       case SolveStatus.success:

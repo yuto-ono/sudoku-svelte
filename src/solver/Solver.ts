@@ -4,11 +4,11 @@ import { EmptyList } from "./EmptyList"
 const CELL_NUMBER = 81
 
 export const SolveStatus = {
-  success: 0,
-  invalidLength: 1,
-  noEmpty: 2,
-  duplicated: 3,
-  unsolvable: 4,
+  success: 0, // 解けた
+  invalidLength: 1, // 配列のサイズが違う
+  noEmpty: 2, // 空きマスがない
+  duplicated: 3, // 重複がある
+  unsolvable: 4, // 解けない
 } as const
 
 export type SolveStatus = typeof SolveStatus[keyof typeof SolveStatus]
@@ -17,51 +17,45 @@ export type SolveStatus = typeof SolveStatus[keyof typeof SolveStatus]
  * 数独の盤面を管理し、解くクラス
  */
 export class Solver {
-  private status: SolveStatus = SolveStatus.success
   private cells: Cell[] = []
   private emptyList: EmptyList
 
-  constructor(data: number[]) {
+  constructor() {
     this.emptyList = new EmptyList()
-
-    if (data.length !== CELL_NUMBER) {
-      this.status = SolveStatus.invalidLength // 配列の長さが違う
-      return
-    }
-
-    this.cells = data.map((num, i) => new Cell(i, num))
-
-    // セルの初期化と空きマスリストの作成
-    for (const cell of this.cells) {
-      if (!cell.init(this.cells)) {
-        this.status = SolveStatus.duplicated // 重複を発見
-        return
-      }
-      if (cell.value === 0) {
-        this.emptyList.push(cell)
-      }
-    }
-
-    if (this.emptyList.length === 0) {
-      this.status = SolveStatus.noEmpty // 空きマスがない
-    }
+    this.cells = [...Array(CELL_NUMBER)].map((_, i) => new Cell(i))
+    this.cells.forEach((cell) => cell.setRelatedCells(this.cells))
   }
 
   /**
    * 数独を解く
    */
-  solve(): SolveStatus {
-    if (this.status !== SolveStatus.success) {
-      return this.status
+  solve(data: number[]): SolveStatus {
+    if (data.length !== CELL_NUMBER) {
+      return SolveStatus.invalidLength // 配列の長さが違う
     }
-    return this.solveInternal() ? SolveStatus.success : SolveStatus.unsolvable
+
+    this.cells.forEach((cell) => cell.init())
+    this.emptyList.clear()
+    for (const cell of this.cells) {
+      const num = data[cell.pos]
+      if (num === 0) {
+        this.emptyList.push(cell)
+      } else if (!cell.setNum(num)) {
+        return SolveStatus.duplicated // 重複を発見
+      }
+    }
+
+    if (this.emptyList.length === 0) {
+      return SolveStatus.noEmpty // 空きマスがない
+    }
+    return this.solveRecursive() ? SolveStatus.success : SolveStatus.unsolvable
   }
 
   /**
    * 現在の盤面のデータを取得
    */
   getNumberArray(): number[] {
-    return this.cells.map((cell) => cell.value)
+    return this.cells.map((cell) => cell.num)
   }
 
   /**
@@ -69,17 +63,17 @@ export class Solver {
    * 解けたら true, 解けなかったら false を返す
    * 改良バックトラック
    */
-  private solveInternal(): boolean {
+  private solveRecursive(): boolean {
     // 空きマスを1つ選ぶ
     const cell = this.emptyList.pop()
 
     // 候補に上がっている数字を入れてみる
     for (let i = 1; i <= 9; i++) {
-      if (cell.setValue(i)) {
-        if (this.emptyList.length === 0 || this.solveInternal()) {
+      if (cell.setNum(i)) {
+        if (this.emptyList.length === 0 || this.solveRecursive()) {
           return true
         }
-        cell.resetValue()
+        cell.resetNum()
       }
     }
 

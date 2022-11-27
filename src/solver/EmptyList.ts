@@ -11,7 +11,7 @@ export class EmptyList extends Cell {
   length = 0
 
   constructor() {
-    super(-1, 1)
+    super(-1)
   }
 
   /**
@@ -57,5 +57,14 @@ export class EmptyList extends Cell {
     cell.prev.next = cell
     cell.next.prev = cell
     this.length++
+  }
+
+  /**
+   * 空にする
+   */
+  clear(): void {
+    this.prev = this
+    this.next = this
+    this.length = 0
   }
 }
