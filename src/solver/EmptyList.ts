@@ -63,8 +63,8 @@ export class EmptyList extends Cell {
    * 空にする
    */
   clear(): void {
-    this.next = this
     this.prev = this
+    this.next = this
     this.length = 0
   }
 }
