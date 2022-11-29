@@ -1,9 +1,9 @@
 <script lang="ts">
   import Button from "./Button.svelte"
   import { cells, cellsIsEmpty, solved, time } from "./stores"
-  import { Solver, SolveStatus } from "./solver"
+  import { SudokuSolver, SolveStatus } from "./solver"
 
-  const solver = new Solver()
+  const solver = new SudokuSolver()
 
   const solve = () => {
     const startTime = performance.now()

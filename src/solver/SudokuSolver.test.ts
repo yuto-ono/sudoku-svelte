@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import { Solver, SolveStatus } from "./Solver"
+import { SudokuSolver, SolveStatus } from "./SudokuSolver"
 import {
   sample1,
   answer1,
@@ -10,7 +10,7 @@ import {
 } from "./samples.json"
 
 describe("Solver", () => {
-  const solver = new Solver()
+  const solver = new SudokuSolver()
   it("sample 1", () => {
     expect(solver.solve(sample1.flat())).toBe(SolveStatus.success)
     expect(solver.getNumberArray()).toStrictEqual(answer1.flat())
