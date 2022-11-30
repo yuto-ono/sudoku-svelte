@@ -1,9 +1,8 @@
 const CHUNK_NUM = 3
 const COL_NUM = 9
 
-// 1-9 すべて候補に上がっている状態の candidates
-// ビットで候補を管理している（2進数で 1111111110）
-const DEFAULT_CANDIDATES = 0x3fe
+// 候補リストの長さ
+const CANDIDATES_LEN = 10
 
 /**
  * それぞれのマスを表すクラス
@@ -16,7 +15,7 @@ export class Cell {
   prev: Cell
   next: Cell
   pos: number
-  private candidates = DEFAULT_CANDIDATES
+  private candidates = Array<boolean>(CANDIDATES_LEN).fill(true)
   private relatedCells: Cell[] = []
   private changedCells: Cell[] = []
 
@@ -48,7 +47,7 @@ export class Cell {
    */
   init(): void {
     this.num = 0
-    this.candidates = DEFAULT_CANDIDATES
+    this.candidates.fill(true)
     this.candidatesCount = COL_NUM
     this.changedCells.splice(0)
   }
@@ -58,18 +57,17 @@ export class Cell {
    * 矛盾が生じたら false を返す
    */
   setNum(num: number): boolean {
-    const mask = 1 << num
-    if ((this.candidates & mask) === 0) {
+    if (!this.candidates[num]) {
       return false
     }
     this.num = num
     for (const cell of this.relatedCells) {
-      if (cell.num === 0 && cell.candidates & mask) {
+      if (cell.num === 0 && cell.candidates[num]) {
         if (cell.candidatesCount === 1) {
           this.resetNum()
           return false
         }
-        cell.candidates ^= mask
+        cell.candidates[num] = false
         cell.candidatesCount--
         this.changedCells.push(cell)
       }
@@ -82,9 +80,8 @@ export class Cell {
    * changedCells をもとに、関連セルの候補も元に戻す
    */
   resetNum(): void {
-    const mask = 1 << this.num
     this.changedCells.forEach((cell) => {
-      cell.candidates ^= mask
+      cell.candidates[this.num] = true
       cell.candidatesCount++
     })
     this.changedCells.splice(0)
