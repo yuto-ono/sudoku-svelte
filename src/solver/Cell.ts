@@ -1,3 +1,6 @@
+const CHUNK_NUM = 3
+const COL_NUM = 9
+
 // 1-9 すべて候補に上がっている状態の candidates
 // ビットで候補を管理している（2進数で 1111111110）
 const DEFAULT_CANDIDATES = 0x3fe
@@ -9,7 +12,7 @@ const DEFAULT_CANDIDATES = 0x3fe
  */
 export class Cell {
   num: number = 0
-  candidatesCount = 9
+  candidatesCount = COL_NUM
   prev: Cell
   next: Cell
   pos: number
@@ -27,13 +30,13 @@ export class Cell {
    * 関連セルリストの作成
    */
   setRelatedCells(cells: Cell[]): void {
-    const row = Math.floor(this.pos / 9)
-    const col = this.pos % 9
-    const area33top = Math.floor(row / 3) * 3
-    const area33left = Math.floor(col / 3) * 3
-    for (let i = 0; i < 9; i++) {
-      const row33 = area33top + Math.floor(i / 3)
-      const col33 = area33left + (i % 3)
+    const row = Math.floor(this.pos / COL_NUM)
+    const col = this.pos % COL_NUM
+    const area33top = Math.floor(row / CHUNK_NUM) * CHUNK_NUM
+    const area33left = Math.floor(col / CHUNK_NUM) * CHUNK_NUM
+    for (let i = 0; i < COL_NUM; i++) {
+      const row33 = area33top + Math.floor(i / CHUNK_NUM)
+      const col33 = area33left + (i % CHUNK_NUM)
       this.addRelatedCell(cells, row, i)
       this.addRelatedCell(cells, i, col)
       this.addRelatedCell(cells, row33, col33)
@@ -46,7 +49,7 @@ export class Cell {
   init(): void {
     this.num = 0
     this.candidates = DEFAULT_CANDIDATES
-    this.candidatesCount = 9
+    this.candidatesCount = COL_NUM
     this.changedCells.splice(0)
   }
 
@@ -92,7 +95,7 @@ export class Cell {
    * 指定位置のセルを関連セルのリストに追加
    */
   private addRelatedCell(cells: Cell[], row: number, col: number): void {
-    const pos = row * 9 + col
+    const pos = row * COL_NUM + col
     if (pos !== this.pos) {
       const cell = cells[pos]
       if (!this.relatedCells.includes(cell)) {

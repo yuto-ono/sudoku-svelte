@@ -1,17 +1,15 @@
 <script lang="ts">
   import Button from "./Button.svelte"
   import { cells, cellsIsEmpty, solved, time } from "./stores"
-  import { Solver, SolveStatus } from "./solver"
+  import { solve, SolveStatus } from "./solver"
 
-  const solver = new Solver()
-
-  const solve = () => {
+  const invokeSolve = () => {
     const startTime = performance.now()
-    const result = solver.solve($cells.map((cell) => cell.num))
+    const { solveStatus, numArray } = solve($cells.map((cell) => cell.num))
     $time = performance.now() - startTime
-    switch (result) {
+    switch (solveStatus) {
       case SolveStatus.success:
-        cells.setSolvedArray(solver.getNumberArray())
+        cells.setSolvedArray(numArray)
         $solved = true
         break
       case SolveStatus.duplicated:
@@ -43,7 +41,7 @@
 <div class="btn-box">
   <div class="btn-wrapper">
     {#if !$solved}
-      <Button variant="primary" on:click={solve} disabled={$cellsIsEmpty}>
+      <Button variant="primary" on:click={invokeSolve} disabled={$cellsIsEmpty}>
         実行
       </Button>
     {:else}
