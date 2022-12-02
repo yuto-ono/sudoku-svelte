@@ -3,20 +3,39 @@ import { EmptyList } from "./EmptyList"
 
 const CELL_NUMBER = 81
 
+/**
+ * ソルブ失敗時の種別
+ * invalidLength 配列のサイズが違う
+ * noEmpty 空きマスがない
+ * duplicated 重複がある
+ * unsolvable 解けない
+ */
 export const SolveStatus = {
-  success: 0, // 解けた
-  invalidLength: 1, // 配列のサイズが違う
-  noEmpty: 2, // 空きマスがない
-  duplicated: 3, // 重複がある
-  unsolvable: 4, // 解けない
+  invalidLength: 1,
+  noEmpty: 2,
+  duplicated: 3,
+  unsolvable: 4,
 } as const
 
 export type SolveStatus = typeof SolveStatus[keyof typeof SolveStatus]
 
-export type SolveReturn = {
-  solveStatus: SolveStatus
-  numArray: number[]
+/**
+ * ソルブ成功したときの戻り値
+ */
+export type SolveAnswer = {
+  success: true
+  solution: number[]
 }
+
+/**
+ * ソルブ失敗したときの戻り値
+ */
+export type SolveFailed = {
+  success: false
+  status: SolveStatus
+}
+
+export type SolveResult = SolveAnswer | SolveFailed
 
 const emptyList = new EmptyList()
 const cells = [...Array(CELL_NUMBER)].map((_, i) => new Cell(i))
@@ -25,11 +44,12 @@ cells.forEach((cell) => cell.setRelatedCells(cells))
 /**
  * 数独を解く
  * @param numArray 数独を表す配列
- * @returns solveStatus ソルブ状態, numArray ソルブ済の配列
+ * @returns succes: true の場合 answer にソルブ済の配列が入ります。
+ * success: false なら、 status にステータスコードが入ります。
  */
-export const solve = (numArray: number[]): SolveReturn => {
+export const solve = (numArray: number[]): SolveResult => {
   if (numArray.length !== CELL_NUMBER) {
-    return { solveStatus: SolveStatus.invalidLength, numArray }
+    return { success: false, status: SolveStatus.invalidLength }
   }
   cells.forEach((cell) => cell.init())
   emptyList.clear()
@@ -38,19 +58,16 @@ export const solve = (numArray: number[]): SolveReturn => {
     if (num === 0) {
       emptyList.push(cell)
     } else if (!cell.setNum(num)) {
-      return { solveStatus: SolveStatus.duplicated, numArray }
+      return { success: false, status: SolveStatus.duplicated }
     }
   }
   if (emptyList.length === 0) {
-    return { solveStatus: SolveStatus.noEmpty, numArray }
+    return { success: false, status: SolveStatus.noEmpty }
   }
   if (!solveRecursive()) {
-    return { solveStatus: SolveStatus.unsolvable, numArray }
+    return { success: false, status: SolveStatus.unsolvable }
   }
-  return {
-    solveStatus: SolveStatus.success, // 解けた
-    numArray: cells.map((cell) => cell.num),
-  }
+  return { success: true, solution: cells.map((cell) => cell.num) }
 }
 
 /**

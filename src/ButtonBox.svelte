@@ -5,25 +5,26 @@
 
   const invokeSolve = () => {
     const startTime = performance.now()
-    const { solveStatus, numArray } = solve($cells.map((cell) => cell.num))
+    const result = solve($cells.map((cell) => cell.num))
     $time = performance.now() - startTime
-    switch (solveStatus) {
-      case SolveStatus.success:
-        cells.setSolvedArray(numArray)
-        $solved = true
-        break
-      case SolveStatus.duplicated:
-        alert("重複があります。")
-        break
-      case SolveStatus.noEmpty:
-        alert("空白のマスがありません。")
-        break
-      case SolveStatus.unsolvable:
-        alert("解けませんでした。")
-        break
-      default:
-        alert("不正な入力です。")
-        break
+    if (result.success) {
+      cells.setSolvedArray(result.solution)
+      $solved = true
+    } else {
+      switch (result.status) {
+        case SolveStatus.duplicated:
+          alert("重複があります。")
+          break
+        case SolveStatus.noEmpty:
+          alert("空白のマスがありません。")
+          break
+        case SolveStatus.unsolvable:
+          alert("解けませんでした。")
+          break
+        default:
+          alert("不正な入力です。")
+          break
+      }
     }
   }
 
