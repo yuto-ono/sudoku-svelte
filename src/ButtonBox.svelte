@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from "./Button.svelte"
   import { cells, cellsIsEmpty, solved, time } from "./stores"
-  import { solve, SolveStatus } from "./solver"
+  import { solve, SolveStatus } from "sudoku-solver-ts"
 
   const invokeSolve = () => {
     const startTime = performance.now()

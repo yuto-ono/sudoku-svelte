@@ -1,6 +1,6 @@
 <script lang="ts">
   import Button from "./Button.svelte"
-  import { sample1, sample2 } from "./solver"
+  import { sample1, sample2 } from "./samples.json"
   import { cells, solved } from "./stores"
 
   const setSample = (numArray: number[]) => {
